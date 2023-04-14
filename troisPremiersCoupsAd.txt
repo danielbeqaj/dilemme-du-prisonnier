@@ -1,0 +1,5 @@
+%Recuperer les trois premiers coups d'un adversaire
+
+troisPremiersCoupsAd(L,P1,P2,P3):-reverse(L,InvL),InvL=[[_,P1]|L1],L1=[[_,P2]|L2],L2=[[_,P3]|_].
+
+%troisPremiersCoupsAd([[t,c],[c,c],[c,c],[t,t]],P1,P2,P3).

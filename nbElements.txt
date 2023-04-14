@@ -1,0 +1,4 @@
+%nbElementsListe
+
+nbElements([],0).
+nbElements([_|L],R):-nbElements(L,R1),R is R1+1.

@@ -1,0 +1,14 @@
+% jouer_x
+
+liste(0,[]):-!.
+liste(N,[[t,t]|L]):-N1 is N-1,liste(N1,L). 
+
+jouer(x,[],t).
+jouer(x,[[_,X],[_,X]|_],t).
+jouer(x,[[X,X]|_],c).
+jouer(x,[[X,Y]|_],t):- X\==Y.
+
+%liste(80,L),jouer(x,L,R).
+
+%tct
+%ttt

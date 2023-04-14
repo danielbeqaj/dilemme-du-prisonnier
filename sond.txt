@@ -1,0 +1,17 @@
+% sond
+
+nbElements_queens([],0).
+nbElements_queens([_|L],R):-nbElements_queens(L,R1),R is R1+1.
+
+dernierCoupAd_queens([[_,R]|_],R).
+troisDerniersCoupsAd_queens(L,P1,P2,P3):-L=[[_,P3]|L1],L1=[[_,P2]|L2],L2=[[_,P1]|_].
+
+sond_queens(L,R):-nbElements_queens(L,0),R=t.
+sond_queens(L,R):-nbElements_queens(L,1),R=c.
+sond_queens(L,R):-nbElements_queens(L,2),R=c.
+sond_queens(L,R):-nbElements_queens(L,3),troisDerniersCoupsAd_queens(L,_,c,c),R=t.
+sond_queens(L,R):-nbElements_queens(L,3),(troisDerniersCoupsAd_queens(L,_,t,c);troisDerniersCoupsAd_queens(L,_,c,t)),R=c.
+sond_queens(L,R):-nbElements_queens(L,3),troisDerniersCoupsAd_queens(L,_,t,t),R=t.
+sond_queens(L,R):-nbElements_queens(L,NE),NE>3,NE<9,troisDerniersCoupsAd_queens(L,c,c,c),R=t,!.
+sond_queens(L,R):-nbElements_queens(L,NE),NE>3,NE<9,dernierCoupAd_queens(L,R).
+sond_queens(L,R):-nbElements_queens(L,9),R=t.

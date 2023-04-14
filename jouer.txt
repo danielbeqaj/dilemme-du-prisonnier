@@ -1,0 +1,69 @@
+% jouer/3 de queens (BEQAJ Daniel,BOUROI Tamara)
+
+nbElements_queens([],0).
+nbElements_queens([_|L],R):-nbElements_queens(L,R1),R is R1+1.
+
+troisPremiersCoupsAd_queens(L,P1,P2,P3):-reverse(L,InvL),InvL=[[_,P1]|L1],L1=[[_,P2]|L2],L2=[[_,P3]|_].
+troisDerniersCoupsAd_queens(L,P1,P2,P3):-L=[[_,P3]|L1],L1=[[_,P2]|L2],L2=[[_,P1]|_].
+
+periodiqueTTC_queens(L):-nbElements_queens(L,NE),NE mod 3 =:= 0 ,troisDerniersCoupsAd_queens(L,t,t,c).
+periodiqueTTC_queens(L):-L=[t|L1],periodiqueTTC_queens(L1).
+periodiqueTTC_queens(L):-L=[t|[t|L1]],periodiqueTTC_queens(L1).
+
+periodiqueCCT_queens(L):-nbElements_queens(L,NE),NE mod 3 =:= 0 , troisDerniersCoupsAd_queens(L,c,c,t).
+periodiqueCCT_queens(L):-L=[c|L1],periodiqueCCT_queens(L1).
+periodiqueCCT_queens(L):-L=[c|[c|L1]],periodiqueCCT_queens(L1).
+
+dernierCoupAd_queens([[_,R]|_],R).
+
+% Mes trois premiers coups
+jouer(queens,[],t).
+jouer(queens,[[t,_]],t).
+jouer(queens,[[t,_],[t,_]],t).
+
+% Mon jeu contre GEN
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,c,c,c),R=t.
+
+% Mon jeu contre MEC ou MEF
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,t,t,t),nbElements_queens(L,NE),(NE=:=3;NE=:=4),R=c.
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,t,t,t),nbElements_queens(L,NE),NE>4,NE<99,
+                                      ((dernierCoupAd_queens(L,c),R=c);(dernierCoupAd_queens(L,t),R=t)).
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,t,t,t),nbElements_queens(L,NE),NE=:=99,R=t.
+
+
+% Mon jeu contre SON , DON
+jouer(queens,L,R):-(troisPremiersCoupsAd_queens(L,t,c,c);troisPremiersCoupsAd_queens(L,c,t,t)),nbElements_queens(L,NE),(NE=:=3;NE=:=4),R=c.
+jouer(queens,L,R):-(troisPremiersCoupsAd_queens(L,t,c,c);troisPremiersCoupsAd_queens(L,c,t,t)),nbElements_queens(L,NE),NE>4,NE<99,
+                                      ((dernierCoupAd_queens(L,c),R=c);(dernierCoupAd_queens(L,t),R=t)).
+jouer(queens,L,R):-(troisPremiersCoupsAd_queens(L,t,c,c);troisPremiersCoupsAd_queens(L,c,t,t)),nbElements_queens(L,NE),NE=:=99,R=t.
+
+% Mon jeu contre GRA
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,c,t,c),nbElements_queens(L,NE),NE=:=3,R=c.
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,c,t,c),nbElements_queens(L,NE),NE>3,NE<99,
+                                       ((dernierCoupAd_queens(L,c),R=c);(dernierCoupAd_queens(L,t),R=t)).
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,c,t,c),nbElements_queens(L,NE),NE=:=99,R=t.
+
+% Mon jeu contre les autres strategies
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,c,c,t),nbElements_queens(L,NE),NE>2,NE<6,
+                                      ((dernierCoupAd_queens(L,c),R=c);(dernierCoupAd_queens(L,t),R=t)).
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,c,c,t),nbElements_queens(L,NE),NE>=6,NE<99,periodiqueCCT_queens(L),R=t.
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,c,c,t),nbElements_queens(L,NE),NE>=6,NE<99,
+                                      ((not(periodiqueCCT_queens(L)),dernierCoupAd_queens(L,c),R=c);
+                                            (not(periodiqueCCT_queens(L)),dernierCoupAd_queens(L,t),R=t)).
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,c,c,t),nbElements_queens(L,NE),NE=:=99,R=t.
+%
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,t,c,t),nbElements_queens(L,NE),NE>2,NE<99,
+                                      ((dernierCoupAd_queens(L,c),R=c);(dernierCoupAd_queens(L,t),R=t)).
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,c,t,c),nbElements_queens(L,NE),NE=:=99,R=t.
+%
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,t,t,c),nbElements_queens(L,NE),NE>2,NE<6,
+                                      ((dernierCoupAd_queens(L,c),R=c);(dernierCoupAd_queens(L,t),R=t)).
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,t,t,c),nbElements_queens(L,NE),NE>=6,NE<99,periodiqueTTC_queens(L),R=t.
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,t,t,c),nbElements_queens(L,NE),NE>=6,NE<99,
+                                      ((not(periodiqueTTC_queens(L)),dernierCoupAd_queens(L,c),R=c);
+                                            (not(periodiqueTTC_queens(L)),dernierCoupAd_queens(L,t),R=t)).
+jouer(queens,L,R):-troisPremiersCoupsAd_queens(L,t,t,c),nbElements_queens(L,NE),NE=:=99,R=t.
+
+
+
+
